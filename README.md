@@ -37,7 +37,7 @@ Software: Student Prediction Early Intervention
 #### - docker exec -i postgres pg_restore -d spei -U root < SPEI/BD/bk_spei_01-mayo-2023.sql
 
 ## Ejecutar la aplicación de Python (ver en local host del navegador)
-#### - python3 manage.py runserver 0.0.0.0:80
+#### - python3 manage.py runserver 0.0.0.0:80 &
 
 - Usuario: ??
 - contraseña: ??
