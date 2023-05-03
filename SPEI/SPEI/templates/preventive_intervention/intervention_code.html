@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div><h4>Intervención con Código Fuente</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/control_intervention_code/" method="POST" onsubmit="return validarCampos()">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" id="course" name="cmbCourse">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in course %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" id="semester" name="cmbSemester">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in semester %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary" name="btnOption" value="new">Nuevo</button>
+                        <button type="submit" class="btn btn-primary" name="btnOption" value="load">Mostrar</button>
+                        <p>&nbsp;</p>
+                    </form>
+                    <!-- Fin Formulario-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+    
+</body>
+
+<!-- JavaScript --> 
+{% block javascripts %}
+
+<!--Validar campos del formulario-->
+<script src="../static/js/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript">
+  
+  function validarCampos() {
+    // Validación del Curso
+    if(course.value == "seleccione") {
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar el Curso.',
+        });
+      return false;
+    } 
+    
+    // Validación del semestre
+    if(semester.value == "seleccione"){
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar el Semestre.',
+        });
+      return false;
+    }
+  }
+</script>
+
+{% endblock javascripts %}
+<!-- Fin JavaScript-->
+
+</html>

@@ -1,0 +1,299 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <div><h4>Seguimiento del Estudiante</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/student_suggestion/" method="POST" onsubmit="return validarCampos()">
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" id="course" name="cmbCourse">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in course %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" id="semester" name="cmbSemester">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in semester %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Estudiante Intervenido*</label>
+                            <select class="form-control" id="student" name="cmbStudent">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in student %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+
+                        <p>&nbsp;</p>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+
+                        <p>&nbsp;</p>
+                        <p><strong>Intervención</strong></p>
+                        <p>&nbsp;</p>
+                        <table class="table table-striped table-hover table-sm">
+                            <thead>
+                            <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">Semestre</th>
+                                <th scope="col">Nombre Estudiante</th>
+                                <th scope="col">Taller Refuerzo</th>
+                                <th scope="col">Nota Promedio</th>
+                                <th scope="col">Nota Final (Predicción)</th>
+                                <th scope="col">Promedio Intervención</th>
+                                <th scope="col">Desempeño Intervención</th>
+                            </tr>
+                            </thead>
+        
+                            <tbody>
+                            {% for fila in head %}
+                                <tr>
+                                    <td>{{fila.0}}</td>
+                                    <td>{{fila.1}}</td>
+                                    <td>{{fila.2}}</td>
+                                    <td>{{fila.3}}</td>
+                                    <td>{{fila.4}}</td>
+                                    <td>{{fila.5}}</td>
+
+                                    {% if fila.6 < 50 %}
+                                        <td style="color: red"><strong>{{fila.6}}%</strong></td>
+                                        <td style="color: red"><strong>{{'Bajo'}}</strong></td>
+                                    {% elif fila.6 >= 50 and fila.7 <= 75 %}
+                                    <td style="color: orange"><strong>{{fila.6}}</strong></td>
+                                        <td style="color: orange"><strong>{{'Medio'}}</strong></td>
+                                    {% elif fila.6 > 75 %}
+                                    <td style="color: green"><strong>{{fila.6}}</strong></td>
+                                        <td style="color: green"><strong>{{'Alto'}}</strong></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <p>&nbsp;</p>
+                        <p><strong>Detalle Intervención</strong></p>
+                        <p>&nbsp;</p>
+                        <table class="table table-striped table-hover table-sm" id="main_table">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Ejercicio</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Número de Intentos</th>
+                                <th scope="col">Fecha Creacion</th>
+                                <th scope="col">Fecha Entrega</th>
+                                <th scope="col">Fecha Corte</th>
+                            </tr>
+                            </thead>
+        
+                            <tbody>
+                            {% for fila in body %}
+                                <tr>
+                                    <td>{{fila.0}}</td>
+                                    {% if fila.1 == 3 %}
+                                    <td style="color: green"><strong>{{100}}</strong></td>
+                                    {% elif fila.1 == 2 %}
+                                        <td style="color: orange"><strong>{{50}}</strong></td>
+                                    {% elif fila.1 == 1 %}
+                                        <td style="color: red"><strong>{{0}}</strong></td>
+                                    {% endif %}
+                                    <td>{{fila.2}}</td>
+                                    <td>{{fila.3}}</td>
+                                    <td>{{fila.4}}</td>
+                                    <td>{{fila.5}}</td>
+                                    <td>{{fila.6}}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <!-- Gráfica highcharts-->
+                        <div class="row">
+                            <p>&nbsp;</p>
+                            <div class="col-md-12">
+                            <div class="main-card mb-3 card">
+
+                                <script src="https://code.highcharts.com/highcharts.js"></script>
+                                <script src="https://code.highcharts.com/modules/series-label.js"></script>
+                                <script src="https://code.highcharts.com/modules/exporting.js"></script>
+                                <script src="https://code.highcharts.com/modules/export-data.js"></script>
+                                <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+                                <figure class="highcharts-figure">
+                                    <div id="container">
+
+                                    </div>
+                                </figure>
+
+                                <script type="text/javascript">
+                                    Highcharts.chart('container', {
+                                        chart: {
+                                            type: 'column'
+                                        },
+                                        title: {
+                                            text: 'Seguimiento por ejercicio'
+                                        },
+                                        subtitle: {
+                                            text: 'Origen: SPEI'
+                                        },
+                                        xAxis: {
+                                            categories: {{exercise|safe}},
+                                            crosshair: true
+                                        },
+                                        yAxis: {
+                                            min: 0,
+                                            title: {
+                                                text: 'Estado'
+                                            }
+                                        },
+                                        tooltip: {
+                                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                                            footerFormat: '</table>',
+                                            shared: true,
+                                            useHTML: true
+                                        },
+                                        plotOptions: {
+                                            column: {
+                                                pointPadding: 0.2,
+                                                borderWidth: 0
+                                            }
+                                        },
+                                        
+                                        series: [{
+                                            name: 'Estado alcanzado',
+                                            data: {{state|safe}}
+                                        },{
+                                            name: 'Número de intentos',
+                                            data: {{number_attemps|safe}}
+                                        }]
+                                        
+                                    });
+                                </script>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fin gráfica highcharts-->
+                    </form>
+                    <!-- Fin Formulario-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+
+</body>
+<!-- JavaScript --> 
+{% block javascripts %}
+
+<!--Validar campos del formulario-->
+<script src="../static/js/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript">
+  
+  function validarCampos() {
+    // Validación del Curso
+    if(course.value == "seleccione") {
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar el Curso.',
+        });
+      return false;
+    } 
+    
+    // Validación del semestre
+    if(semester.value == "seleccione"){
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar el Semestre.',
+        });
+      return false;
+    }
+
+     // Validación estudiante intervenido
+     if(student.value == "seleccione"){
+      Swal.fire({
+          icon: 'info',
+          text: 'Seleccione Estudiante Intervenido.',
+        });
+      return false;
+    }
+}
+</script>
+
+<!--Import jQuery before export.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<!--Data Table-->
+<script type="text/javascript" src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+
+<!--Export table buttons-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+
+<!--Export table button CSS-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#main_table').DataTable({
+      pageLength: 50,
+      "language": {
+          "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json",
+      },
+    });
+    $('.dataTables_length').addClass('bs-select');
+  });
+</script>
+
+{% endblock javascripts %}
+<!-- Fin JavaScript-->
+</html>

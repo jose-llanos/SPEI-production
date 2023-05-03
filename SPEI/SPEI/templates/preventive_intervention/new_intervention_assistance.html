@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div><h4>Nueva Asistencia de Intervención</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/intervention_assistance/" method="POST">
+                        {% csrf_token %}
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Volver</button>
+                        <p>&nbsp;</p>
+                    </form>
+                    
+                    <form action="/save_intervention_assistance/" method="POST" onsubmit="return validarCampos()">
+                        {% csrf_token %}
+                        <input type="hidden" name="txtId" value="{{ id }}">
+                        <div class="mb-3">
+                        <label class="form-label">Curso *</label>
+                            <select class="form-control" id="course" name="cmbCourse" readonly>
+                                {% if course != '' %}
+                                    <option value="{{ course }}"> {{ course }}</option>
+                                {% endif%}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" id="semester" name="cmbSemester" readonly>
+                                {% if semester != '' %}
+                                    <option value="{{ semester }}"> {{ semester }}</option>
+                                {% endif%}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fechas Intervención *</label>
+                            <select class="form-control" id="tutoringDate" name="cmbTutoringDate">
+                                {% for fila in tutoring_date %}
+                                    <option value="{{ fila }}"> {{ fila }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <table class="table table-striped table-hover table-sm" id="main_table">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Semestre</th>
+                                <th scope="col">Estudiante</th>
+                                <th scope="col">Asistió a Intervención</th>
+                            </tr>
+                            </thead>
+        
+                            <tbody>
+                            {% for fila in record %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{fila.0}}</td>
+                                    <td>{{fila.1}}</td>
+                                    {% if fila.2 == 0 %}
+                                        <td><input type="checkbox" id="chkEstudiante" name="chkEstudiante" value="{{ fila.1 }}"></td>
+                                    {% elif fila.2 == 1 %}
+                                        <td><input type="checkbox" id="chkEstudiante" name="chkEstudiante" value="{{ fila.1 }}" checked></td>
+                                    {% else %}
+                                        <td><input type="checkbox" id="chkEstudiante" name="chkEstudiante" value="{{ fila.1 }}"></td>
+                                    {% endif%}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                    <!-- Fin Formulario-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+    
+</body>
+
+<!-- JavaScript --> 
+{% block javascripts %}
+
+<!--Import jQuery before export.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<!--Data Table-->
+<script type="text/javascript" src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+
+<!--Export table buttons-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+
+<!--Export table button CSS-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#main_table').DataTable({
+      pageLength: 50,
+      "language": {
+          "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json",
+      },
+    });
+    $('.dataTables_length').addClass('bs-select');
+  });
+</script>
+
+<!-- Validación campos del Formulario -->
+<script src="../static/js/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript">
+
+  function validarCampos() {
+    if(fechaIntervencion.value == "" || fechaIntervencion.value == "seleccione") {
+      Swal.fire({
+          icon: 'info',
+          text: 'Ingrese la Fecha de Intervención',
+        });
+      return false;
+    }
+    
+    // Validación de estudiantes que asistieron a la intervención
+    var contador = 0;
+    for(i=0; i<= 50; i++){
+        if(chkEstudiante[i].checked == true){
+          contador = contador + 1;
+        }
+    }
+
+    if(contador == 0){
+        Swal.fire({
+          icon: 'info',
+          text: 'Ingrese el/los Estudiantes que Asistieron a la Intervención ',
+        });
+      return false;
+    }
+
+  }
+</script>
+{% endblock javascripts %}
+<!-- Fin JavaScript-->
+</html>

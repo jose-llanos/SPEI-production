@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>.:: SPEI ::.</title>
+  <link rel="stylesheet" href="../static/css/index.css">
+  <link rel="stylesheet" href="../static/css/style_index.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="route" id="welcome"></div>
+<div id="app">
+  <div class="app-view">  
+    <header class="app-header">
+      <h1>SPEI</h1>
+        Student's<br> 
+        Performance<br/>
+      <span class="app-subheading">
+        Early <br/>
+        Intervention <br/>
+      </span>
+    </header>
+    <form action="/main/" method="POST">
+      <input type="user" required placeholder="User" name="txtUser" />
+      <input type="password" required placeholder="Password" name="txtPassword" />
+      {% csrf_token %}
+      <button name="submit">Login</button>
+      
+    </form>
+    <h5>{{ return }}</h5>
+  </div>
+</div>
+<!-- partial -->
+  
+</body>
+</html>

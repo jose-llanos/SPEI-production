@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div><h4>Intervención con mensaje</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/rpt_intervention_message/" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" name="cmbCurso">
+                                <option>--Seleccione--</option>
+                                <option value="FDP">FDP - Fundamentos de programación</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" name="cmbSemestre">
+                                <option>--Seleccione--</option>
+                                <option value="2022-1">2022-1</option>
+                                <option value="2022-2">2022-2</option>
+                            </select>
+                        </div>
+
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Curso</th>
+                                <th scope="col">Fecha Intervención</th>
+                                <th scope="col">Tema Intervención</th>
+                                <th scope="col">Asunto</th>
+                                <th scope="col">Mensaje</th>
+                                <th scope="col">Estudiantes</th>
+                            </tr>
+                            </thead>
+        
+                            <tbody>
+                            {% for fila in datos %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{fila.0}}</td>
+                                    <td>{{fila.1}}</td>
+                                    <td>{{fila.2}}</td>
+                                    <td>{{fila.3}}</td>
+                                    <td>{{fila.4}}</td>
+                                    <td>{{fila.5}}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <p>&nbsp;</p>
+
+                        {% for fila in emails %}
+                            <p>El mensaje se ha enviado correctamente a: {{fila}}</p>
+                        {% endfor %}
+                    </form>
+                    <!-- Fin Formulario-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+    
+</body>
+</html>

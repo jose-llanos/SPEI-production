@@ -1,0 +1,281 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    {% block navbar %}
+    <!-- Menú Dashboard-->
+    <div class="app-container">
+        <div class="app-main">
+            <div class="app-sidebar sidebar-shadow">
+                <div class="app-sidebar__inner">
+                    <ul class="vertical-nav-menu">
+                        <li class="app-sidebar__heading">Profesor</li>
+                        <li>
+                            <a href="{% url 'teacher_dashboard' %}" class="mm-active">
+                                <i class="fas fa-home"></i>
+                                Principal
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-tools"></i>
+                                Configuración
+                                <i class="fas fa-angle-down"></i>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="">
+                                        <i class="fas fa-wrench"></i>
+                                        Actividades
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="">
+                                        <i class="fas fa-wrench"></i>
+                                        Código Referencia
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'list_course' %}">
+                                        <i class="fas fa-wrench"></i>
+                                        Cursos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="">
+                                        <i class="fas fa-wrench"></i>
+                                        Semestres
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="">
+                                        <i class="fas fa-wrench"></i>
+                                        Sugerencias
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="">
+                                        <i class="fas fa-wrench"></i>
+                                        Temas Intervención
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-cog"></i>
+                                Interfaz INGInious
+                                <i class="fas fa-angle-down"></i>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="">
+                                        <i class="fas fa-sync"></i>
+                                        Aggregations
+                                    </a>
+                                    <a href="">
+                                        <i class="fas fa-sync"></i>
+                                        Submissions
+                                    </a>
+                                    <a href="">
+                                        <i class="fas fa-sync"></i>
+                                        Tasks Cache
+                                    </a>
+                                    <a href="">
+                                        <i class="fas fa-sync"></i>
+                                        Users
+                                    </a>
+                                    <a href="">
+                                        <i class="fas fa-sync"></i>
+                                        User Tasks
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-search"></i>
+                                Consultar
+                                <i class="fas fa-angle-down"></i>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'preventive_grade' %}">
+                                        <i class="fas fa-clipboard"></i>
+                                        Calificación Preventiva
+                                    </a>
+                                    <a href="{% url 'proactive_grade' %}">
+                                        <i class="fas fa-clipboard"></i>
+                                        Calificación Proactiva
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-user-check"></i>
+                                Intervención Preventiva
+                                <i class="fas fa-angle-down"></i>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'record_preventive_intervention' %}">
+                                        <i class="fas fa-upload"></i>
+                                        Subir Registros (Preventiva)
+                                    </a>
+                                    <a href="{% url 'performance_classification' %}">
+                                        <i class="fas fa-dice-five"></i>
+                                        Clasificación Desempeño
+                                    </a>
+                                    <a href="{% url 'intervention_suggestion' %}">
+                                        <i class="fas fa-envelope"></i>
+                                        Intervención con Sugerencia
+                                    </a>                         
+                                    <a href="{% url 'intervention_code' %}">
+                                        <i class="fas fa-file-code"></i>
+                                        Intervención con Código
+                                    </a>
+                                    <a href="{% url 'group_tutoring' %}">
+                                        <i class="fas fa-users"></i>
+                                        Tutoría Grupal
+                                    </a>
+                                    <a href="{% url 'intervention_assistance' %}">
+                                        <i class="fas fa-user-check"></i>
+                                        Asistencia Intervención
+                                    </a>
+                                    <!--<a>-----------------------------</a>-->
+                                    <a href="{% url 'intervention_assistance_report' %}">
+                                        <i class="fas fa-chart-bar"></i>
+                                        Rep. Asistencia Intervención
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+    
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-user-plus"></i>
+                                Intervención Proactiva
+                                <i class="fas fa-angle-down"></i>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'record_proactive_intervention' %}">
+                                        <i class="fas fa-upload"></i>
+                                        Subir Registros (Proactiva)
+                                    </a>
+                                    
+                                    <a href="{% url 'performance_regression' %}">
+                                        <i class="fas fa-dice-d6"></i>
+                                        Regresión Desempeño
+                                    </a>
+                                    <a href="{% url 'reinforcement' %}">
+                                        <i class="fas fa-flag-checkered"></i>
+                                        Refuerzo
+                                    </a>
+                                    <a href="{% url 'suggestion' %}">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        Seguimiento
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-vector-square"></i>
+                                Reportes Predicción
+                                <i class="fas fa-angle-down"></i>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'rpt_columns' %}">
+                                        <i class="fas fa-chart-bar"></i>
+                                        Regresión por Columnas
+                                    </a>
+                                    <a href="{% url 'rpt_lines' %}">
+                                        <i class="fas fa-chart-line"></i>
+                                        Regresión por Líneas
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!--
+                        <li>
+                            <a href="#">
+                                <i class="metismenu-icon pe-7s-graph2"></i>
+                                Reportes Estudiante
+                                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                            </a>
+                            
+                            <ul>
+                                <li>
+                                    <a href="">
+                                        <i class="metismenu-icon"></i>
+                                        Calificaciones por Estudiante
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        -->
+
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-chart-pie"></i>
+                                Reportes Inginious
+                                <i class="fas fa-angle-down"></i>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'activity_grades' %}">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Calificaciones por actividad
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'average_grade' %}">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Promedio Calificación
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'delivered_activities' %}">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Actividades Entregadas
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'tried_activities' %}">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Intentos por Actividad
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'total_tried' %}">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Total Intentos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'average_tried_activity' %}">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Prom. Intentos por Actividad
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fin menú Dashboard--> 
+    {% endblock %}
+</body>
+</html>

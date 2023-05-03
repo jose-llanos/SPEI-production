@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            {% if role == 'Profesor' %}
+                <div>{% include "teacher_menu.html" %}</div>
+            {% elif role == 'Estudiante' %}
+                <div>{% include "student_menu.html" %}</div>
+            {% endif %}
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div><h4>Reporte Promedio Intentos por Actividades Entregadas</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/display_average_tried_activity/" method="POST">
+
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" id="course" name="cmbCourse">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in course %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <p>&nbsp;</p>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Visualizar</button>
+
+                    </form>
+                    <!-- Fin Formulario-->
+
+                    <!-- Gráfica highcharts-->
+                    
+                    <div class="row">
+                        <p>&nbsp;</p>
+                        <div class="col-md-12">
+                        <div class="main-card mb-3 card">
+
+                            <script src="https://code.highcharts.com/highcharts.js"></script>
+                            <script src="https://code.highcharts.com/modules/series-label.js"></script>
+                            <script src="https://code.highcharts.com/modules/exporting.js"></script>
+                            <script src="https://code.highcharts.com/modules/export-data.js"></script>
+                            <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+                            <figure class="highcharts-figure">
+                                <div id="container">
+
+                                </div>
+                            </figure>
+
+                            <script type="text/javascript">
+                                Highcharts.chart('container', {
+                                    chart: {
+                                        type: 'column'
+                                    },
+                                    title: {
+                                        text: 'Reporte Promedio Intentos por Actividades Entregadas'
+                                    },
+                                    subtitle: {
+                                        text: 'Origen: SPEI.inginious'
+                                    },
+                                    xAxis: {
+                                        categories: {{name|safe}},
+                                        crosshair: true
+                                    },
+                                    yAxis: {
+                                        min: 0,
+                                        title: {
+                                            text: 'Promedio Intentos'
+                                        }
+                                    },
+                                    tooltip: {
+                                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                            '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                                        footerFormat: '</table>',
+                                        shared: true,
+                                        useHTML: true
+                                    },
+                                    plotOptions: {
+                                        column: {
+                                            pointPadding: 0.2,
+                                            borderWidth: 0
+                                        }
+                                    },
+                                    
+                                    series: [{
+                                        name: 'Promedio Intentos',
+                                        data: {{average_tried|safe}}
+
+                                    }]
+                                    
+                                });
+                            </script>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin gráfica highcharts-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+    
+</body>
+</html>

@@ -1,0 +1,316 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "student_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div><h4>Reporte Desempeño por Actividad</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/display_performance_activity/" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="user" value="{{ user }}">
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" id="course" name="cmbCourse">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in course %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" id="semester" name="cmbSemester">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in semester %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Actividad </label>
+                            <select class="form-control" id="task" name="cmbTask">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in task %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Visualizar</button>
+                        <p>&nbsp;</p>
+
+                    </form>
+                    <!-- Fin Formulario-->
+
+                    <!-- GRÁFICA: Promedio Calificación-->
+                    <div class="row">
+                        <div class="col-md-12">
+                        <div class="main-card mb-3 card">
+
+                            <script src="https://code.highcharts.com/highcharts.js"></script>
+                            <script src="https://code.highcharts.com/highcharts-more.js"></script>
+                            <script src="https://code.highcharts.com/modules/exporting.js"></script>
+                            <script src="https://code.highcharts.com/modules/export-data.js"></script>
+                            <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+                            <figure class="highcharts-figure">
+                                <table>
+                                    <tr>
+                                        <td style="width:450px;"><div id="SG"></div></td>
+                                        <td style="width:450px;"><div id="CG"></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            {% if student_grade <= 2.9 %}
+                                                <h5>Desempeño del estudiante: <strong style="color: red">Bajo</strong></h5>
+                                            {% elif student_grade <= 4.0 %}
+                                                <h5>Desempeño del estudiante: <strong style="color: orange">Medio</strong></h5>
+                                            {% elif student_grade >= 4.1  %}
+                                                <h5>Desempeño del estudiante: <strong style="color: green">Alto</strong></h5>
+                                            {% endif%}
+                                        </td>
+                                        <td>
+                                            {% if course_avg <= 2.9 %}
+                                                <h5>Desempeño del curso: <strong style="color: red">Bajo</strong></h5>
+                                            {% elif course_avg <= 4.0 %}
+                                                <h5>Desempeño del curso: <strong style="color: orange">Medio</strong></h5>
+                                            {% elif course_avg >= 4.1  %}
+                                                <h5>Desempeño del curso: <strong style="color: green">Alto</strong></h5>
+                                            {% endif%}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </figure>
+
+                            <script type="text/javascript">
+                                Highcharts.chart('SG', {
+
+                                    chart: {
+                                        type: 'gauge',
+                                        plotBackgroundColor: null,
+                                        plotBackgroundImage: null,
+                                        plotBorderWidth: 0,
+                                        plotShadow: false,
+                                        height: '90%'
+                                    },
+
+                                    title: {
+                                        text: 'Desempeño Estudiante'
+                                    },
+
+                                    pane: {
+                                        startAngle: -90,
+                                        endAngle: 89.9,
+                                        background: null,
+                                        center: ['50%', '75%'],
+                                        size: '70%'
+                                    },
+
+                                    // the value axis
+                                    yAxis: {
+                                        min: 0,
+                                        max: 5,
+                                        tickPixelInterval: 72,
+                                        tickPosition: 'inside',
+                                        tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+                                        tickLength: 20,
+                                        tickWidth: 2,
+                                        minorTickInterval: null,
+                                        labels: {
+                                            distance: 20,
+                                            style: {
+                                                fontSize: '14px'
+                                            }
+                                        },
+                                        plotBands: [{
+                                            from: 0,
+                                            to: 2.9,
+                                            color: 'red',
+                                            thickness: 20
+                                        }, {
+                                            from: 3.0,
+                                            to: 4.0,
+                                            color: 'orange',
+                                            thickness: 20
+                                        }, {
+                                            from: 4.1,
+                                            to: 5.0,
+                                            color: 'green',
+                                            thickness: 20
+                                        }]
+                                    },
+
+                                    series: [{
+                                        name: 'Desempeño ',
+                                        data: [{{student_grade|safe}}],
+                                        tooltip: {
+                                            valueSuffix: ''
+                                        },
+                                        dataLabels: {
+                                            format: '{y} ',
+                                            borderWidth: 0,
+                                            color: (
+                                                Highcharts.defaultOptions.title &&
+                                                Highcharts.defaultOptions.title.style &&
+                                                Highcharts.defaultOptions.title.style.color
+                                            ) || '#333333',
+                                            style: {
+                                                fontSize: '16px'
+                                            }
+                                        },
+                                        dial: {
+                                            radius: '80%',
+                                            backgroundColor: 'gray',
+                                            baseWidth: 12,
+                                            baseLength: '0%',
+                                            rearLength: '0%'
+                                        },
+                                        pivot: {
+                                            backgroundColor: 'gray',
+                                            radius: 6
+                                        }
+
+                                    }]
+
+                                    });
+                            </script>
+                            
+
+                            <script type="text/javascript">
+                                Highcharts.chart('CG', {
+
+                                    chart: {
+                                        type: 'gauge',
+                                        plotBackgroundColor: null,
+                                        plotBackgroundImage: null,
+                                        plotBorderWidth: 0,
+                                        plotShadow: false,
+                                        height: '90%'
+                                    },
+
+                                    title: {
+                                        text: 'Desempeño Curso'
+                                    },
+
+                                    pane: {
+                                        startAngle: -90,
+                                        endAngle: 89.9,
+                                        background: null,
+                                        center: ['50%', '75%'],
+                                        size: '70%'
+                                    },
+
+                                    // the value axis
+                                    yAxis: {
+                                        min: 0,
+                                        max: 5,
+                                        tickPixelInterval: 72,
+                                        tickPosition: 'inside',
+                                        tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+                                        tickLength: 20,
+                                        tickWidth: 2,
+                                        minorTickInterval: null,
+                                        labels: {
+                                            distance: 20,
+                                            style: {
+                                                fontSize: '14px'
+                                            }
+                                        },
+                                        plotBands: [{
+                                            from: 0,
+                                            to: 2.9,
+                                            color: 'red',
+                                            thickness: 20
+                                        }, {
+                                            from: 3.0,
+                                            to: 4.0,
+                                            color: 'orange',
+                                            thickness: 20
+                                        }, {
+                                            from: 4.1,
+                                            to: 5.0,
+                                            color: 'green',
+                                            thickness: 20
+                                        }]
+                                    },
+
+                                    series: [{
+                                        name: 'Desempeño',
+                                        data: [{{course_avg|safe}}],
+                                        tooltip: {
+                                            valueSuffix: ' %'
+                                        },
+                                        dataLabels: {
+                                            format: '{y} ',
+                                            borderWidth: 0,
+                                            color: (
+                                                Highcharts.defaultOptions.title &&
+                                                Highcharts.defaultOptions.title.style &&
+                                                Highcharts.defaultOptions.title.style.color
+                                            ) || '#333333',
+                                            style: {
+                                                fontSize: '16px'
+                                            }
+                                        },
+                                        dial: {
+                                            radius: '80%',
+                                            backgroundColor: 'gray',
+                                            baseWidth: 12,
+                                            baseLength: '0%',
+                                            rearLength: '0%'
+                                        },
+                                        pivot: {
+                                            backgroundColor: 'gray',
+                                            radius: 6
+                                        }
+
+                                    }]
+
+                                    });
+                            </script>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin gráfica promedio calificaciones-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+    
+</body>
+</html>

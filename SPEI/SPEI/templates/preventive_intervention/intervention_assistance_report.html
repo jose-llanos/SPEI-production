@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div><h4>Reporte Asistencia de Intervención</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/show_intervention_assistance_report/" method="POST" onsubmit="return validarCampos()">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" id="course" name="cmbCourse">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in course %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" id="semester" name="cmbSemester">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in semester %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Cargar</button>
+                    
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+                    <table class="table table-striped table-hover table-sm" id="main_table">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Estudiante</th>
+                            <th scope="col">Calificación Lab1</th>
+                            <th scope="col">Calificación Lab2</th>
+                            <th scope="col"> Prom. Calificación</th>
+                            <th scope="col">Predicción</th>
+                            <th scope="col">Cant. Intervenciones Programadas</th>
+                            <th scope="col">Cant. Asistencias Estudiante</th>
+                            <th scope="col">% Asistencias Intervención</th>
+                        </tr>
+                        </thead>
+    
+                        <tbody>
+                        {% for fila in record %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ fila.0 }}</td>
+                                <td>{{ fila.1 }}</td>
+                                <td>{{ fila.2 }}</td>
+                                <td>{{ fila.3 }}</td>
+                                <!-- Predicción -->
+                                {% if fila.4 <= 0 %}
+                                    <td style="color: red"><strong>{{fila.4}} - Bajo Desempeño</strong></td>
+                                {% elif fila.4 == 1 %}
+                                    <td style="color: orange"><strong>{{fila.4}} - Medio Desempeño</strong></td>
+                                {% elif fila.4 == 2 %}
+                                    <td style="color: green"><strong>{{fila.4}} - Alto Desempeño</strong></td>
+                                {% endif %}
+
+                                <td>{{ fila.5 }}</td>
+                                <td>{{ fila.6 }}</td>
+                                <!-- Porcentaje Asistencias -->
+                                {% if fila.7 < 50 %}
+                                    <td style="color: red"><strong>{{fila.7}}%</strong></td>
+                                {% elif fila.7 >= 50 and fila.7 < 80 %}
+                                    <td style="color: orange"><strong>{{fila.7}}%</strong></td>
+                                {% elif fila.7 >= 80 %}
+                                    <td style="color: green"><strong>{{fila.7}}%</strong></td>
+                                {% endif %}
+                               
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </form>
+                    <!-- Fin Formulario-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+    
+</body>
+
+<!-- JavaScript --> 
+{% block javascripts %}
+
+<!--Validar campos del formulario-->
+<script src="../static/js/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript">
+  
+  function validarCampos() {
+    // Validación del Curso
+    if(course.value == "seleccione") {
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar el Curso.',
+        });
+      return false;
+    } 
+    
+    // Validación del semestre
+    if(semester.value == "seleccione"){
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar el Semestre.',
+        });
+      return false;
+    }
+}
+</script>
+
+<!--Import jQuery before export.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<!--Data Table-->
+<script type="text/javascript" src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+
+<!--Export table buttons-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+
+<!--Export table button CSS-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#main_table').DataTable({
+      pageLength: 50,
+      "language": {
+          "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json",
+      },
+    });
+    $('.dataTables_length').addClass('bs-select');
+  });
+</script>
+
+{% endblock javascripts %}
+<!-- Fin JavaScript-->
+
+</html>

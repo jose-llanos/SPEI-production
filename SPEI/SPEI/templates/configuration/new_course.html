@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div><h4>Cursos</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/list_course/" method="POST">
+                        {% csrf_token %}
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Volver</button>
+                        <p>&nbsp;</p>
+                    </form>
+
+                    <form action="/save_course/" method="POST" onsubmit="return validarCampos()">
+                        {% csrf_token %}
+                        <input type="hidden" name="txtId" value="{{ id }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Curso *</label>
+                            {% if course_name != '' %}
+                                <input class="form-control" type="text" id="courseName" name="txtCourseName" value={{ course_name }}>
+                            {% else %}
+                                <input class="form-control" type="text" id="courseName" name="txtCourseName">
+                            {% endif%}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Sigla/Acrónimo *</label>
+                            {% if acronym != '' %}
+                                <input class="form-control" type="text" id="acronym" name="txtAcronym" value={{ acronym }}>
+                            {% else %}
+                            <input class="form-control" type="text" id="acronym" name="txtAcronym">
+                            {% endif%}
+                        </div>
+                        
+
+                        <div class="mb-3">
+                            <label class="form-label">Estado *</label>
+                            <select class="form-control" id="cmbState" name="cmbState">
+                                {% if state != '' %}
+                                   <option value="{{ state }}">{{ state }}</option>
+                                {% endif%} 
+                                <option value="A">A</option>
+                                <option value="I">I</option>
+                            </select>
+                        </div>
+                
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <p>&nbsp;</p>
+        
+                    </form>
+                    <!-- Fin Formulario-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+    
+</body>
+
+<!-- JavaScript --> 
+{% block javascripts %}
+
+<!--Validar campos del formulario-->
+<script src="../static/js/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript">
+  
+function validarCampos() {
+    // Validación Nombre del Curso
+    if(courseName.value == "") {
+        Swal.fire({
+            icon: 'info',
+            text: 'Debe ingresar el Nombre del curso.',
+            });
+        return false;
+    } 
+
+    // Validación Sigla/Acronimo
+    if(acronym.value == "") {
+        Swal.fire({
+            icon: 'info',
+            text: 'Debe ingresar Sigla/Acrónimo.',
+        });
+        return false;
+    } 
+
+    // Validación Estado
+    if(cmbState.value == "") {
+        Swal.fire({
+            icon: 'info',
+            text: 'Debe ingresar el Estado.',
+        });
+        return false;
+    } 
+}
+</script>
+
+{% endblock javascripts %}
+<!-- Fin JavaScript-->
+
+</html>

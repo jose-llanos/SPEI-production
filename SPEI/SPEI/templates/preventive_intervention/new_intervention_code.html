@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div><h4>Nueva Intervención con Código Fuente</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/intervention_code/" method="POST">
+                        {% csrf_token %}
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Volver</button>
+                        <p>&nbsp;</p>
+                    </form>
+
+                    <form action="/upload_code/" method="POST" onsubmit="return validarActividad()">
+                        {% csrf_token %}
+                        <input type="hidden" name="txtId" value="{{ id }}">
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" id="course" name="cmbCourse" readonly>
+                                {% if course != '' %}
+                                    <option value="{{ course }}"> {{ course }}</option>
+                                {% endif%}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" id="semester" name="cmbSemester" readonly>
+                                {% if semester != '' %}
+                                    <option value="{{ semester }}"> {{ semester }}</option>
+                                {% endif%}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mensaje *</label>
+                            <textarea class="form-control" id="message" name="txtMessage" rows="3">{{ message }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Actividad </label>
+                            <select class="form-control" id="task" name="cmbTask">
+                                {% if selected_task != '' %}
+                                   <option value="{{ selected_task }}"> {{ selected_task }}</option>
+                                {% endif%} 
+                                {% for fila in task %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Cargar Código (plantilla)</button>
+                        <p>&nbsp;</p>
+                    </form>
+
+                    <form action="/save_intervention_code/" method="POST" onsubmit="return validarCampos()">
+                        {% csrf_token %}
+                        <input type="hidden" name="txtId" value="{{ id }}">
+                        <input type="hidden" name="cmbCourse" value="{{ course }}">
+                        <input type="hidden" name="cmbSemester" value="{{ semester }}">
+                        <input type="hidden" name="txtMessage" value="{{ message }}">
+                        <input type="hidden" name="cmbTask" value="{{ selected_task }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Código fuente de referencia *</label>
+                            <input type="hidden" id="code" name="txtCode" value="{{ code }}">
+                            <pre>
+                                <code class="language-cpp">
+                                    {{ code }}
+                                </code>
+                            </pre>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <p>&nbsp;</p>
+                        
+                    </form>
+                    <!-- Fin Formulario-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+
+</body>
+
+
+<!-- JavaScript --> 
+{% block javascripts %}
+
+<link rel="stylesheet" href="/static/librerias/highlight/styles/default.min.css">
+<script src="/static/librerias/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+
+<!--Validar campos del formulario-->
+<script src="../static/js/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript">
+
+function validarActividad(){
+    // Validación Actividad
+    if(task.value == "") {
+    Swal.fire({
+        icon: 'info',
+        text: 'Debe ingresar la Actividad.',
+    });
+    return false;
+    }
+
+}
+  
+function validarCampos() {
+    // Validación Mensaje
+    if(message.value == "") {
+        Swal.fire({
+            icon: 'info',
+            text: 'Debe ingresar el Mensaje.',
+        });
+        return false;
+    } 
+
+    if(task.value == "") {
+    Swal.fire({
+        icon: 'info',
+        text: 'Debe ingresar la Actividad.',
+    });
+    return false;
+    }
+
+    // Validación Código
+    if(code.value == "") {
+        Swal.fire({
+            icon: 'info',
+            text: 'Debe ingresar el Código Fuente.',
+        });
+        return false;
+    }
+}
+</script>
+
+{% endblock javascripts %}
+<!-- Fin JavaScript-->
+</html>

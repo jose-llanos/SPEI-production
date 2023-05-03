@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-dice-five"></i>
+                                </div>
+                                <div><h4>Predicción del Desempeño del Estudiante (Clasificación)</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/performance_classification_prediction/" method="POST" onsubmit="return validarCampos()">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" id="course" name="cmbCourse">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in course %}
+                                    <option value="{{ fila.0 }}"> {{ fila.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" id="semester" name="cmbSemester">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in semester %}
+                                    <option value="{{ fila.0 }}"> {{ fila.1 }}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semana Predicción *</label>
+                            <select class="form-control" id="interventionWeek" name="cmbInterventionWeek">
+                                <option value="seleccione">--Seleccione--</option>
+                                {% for fila in intervention_week %}
+                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+
+                        <p>&nbsp;</p>
+                        <button type="submit" class="btn btn-primary">Predecir</button>
+
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+
+                        <p>&nbsp;</p>
+
+                        <table class="table table-striped table-hover table-sm" id="main_table">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Lab 1</th>
+                                <th scope="col">Tiempo de Entrega Lab1 (Días)</th>
+                                <th scope="col">Número Intentos Lab1</th>
+                                <th scope="col">Resultado Lab1</th>
+                                <th scope="col">Lab 2</th>
+                                <th scope="col">Predicción</th>
+                            </tr>
+                            </thead>
+        
+                            <tbody>
+                            {% for fila in record %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{fila.0}}</td>
+                                    <td>{{fila.1}}</td>
+                                    <td>{{fila.2}}</td>
+                                    <td>{{fila.3}}</td>
+
+                                    <!-- Resultado Lab 1-->
+                                    {% if fila.4 == 0 %}
+                                        <td>Sin envío</td>
+                                    {% elif fila.4 == 1 %}
+                                        <td>Fallo</td>
+                                    {% elif fila.4 == 2 %}
+                                        <td>Fuera de Tiempo</td>
+                                    {% elif fila.4 == 3 %}
+                                        <td>Éxito</td>
+                                    {% endif%}
+
+                                    <td>{{fila.5}}</td>
+                    
+                                    <!-- Predicción -->
+                                    {% if fila.6 == 0 %}
+                                        <td style="color: red"><strong>{{fila.6}} - Bajo Desempeño</strong></td>
+                                    {% elif fila.6 == 1 %}
+                                        <td style="color: orange"><strong>{{fila.6}} - Medio Desempeño</strong></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                    <!-- Fin Formulario-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+
+</body>
+
+<!-- JavaScript --> 
+{% block javascripts %}
+
+<!--Validar campos del formulario-->
+<script src="../static/js/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript">
+  
+  function validarCampos() {
+    // Validación del Curso
+    if(course.value == "seleccione") {
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar el Curso.',
+        });
+      return false;
+    } 
+    
+    // Validación del semestre
+    if(semester.value == "seleccione"){
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar el Semestre.',
+        });
+      return false;
+    }
+
+    // Validación semana de predicción
+    if(interventionWeek.value == "seleccione"){
+      Swal.fire({
+          icon: 'info',
+          text: 'Debe ingresar Semana de Predicción.',
+        });
+      return false;
+    }
+  }
+</script>
+
+<!--Import jQuery before export.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<!--Data Table-->
+<script type="text/javascript" src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+
+<!--Export table buttons-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+
+<!--Export table button CSS-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#main_table').DataTable({
+      pageLength: 50,
+      "language": {
+          "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json",
+      },
+    });
+    $('.dataTables_length').addClass('bs-select');
+  });
+</script>
+
+{% endblock javascripts %}
+<!-- Fin JavaScript-->
+
+</html>

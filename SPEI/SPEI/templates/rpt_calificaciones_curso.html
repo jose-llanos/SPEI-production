@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <!-- Cabecera -->
+    {% block header %}
+        {% include "head.html" %}
+    {% endblock %}
+
+    <!-- Cuerpo y Menú -->
+    {% block content %}
+        <div class="app-main">
+            <!-- Menú -->
+            <div>{% include "teacher_menu.html" %}</div>
+
+            <!-- Cuerpo -->
+            <div class="app-main__outer">
+                <!-- Titulo Cuerpo -->
+                <div class="app-main__inner">
+                    <div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div class="page-title-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div><h4>Reporte Calificaciones Curso</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin titulo Cuerpo -->
+                    
+                    <!-- Formulario -->
+                    <form action="/visualizacion_calificaciones_curso/" method="POST">
+
+                        <div class="mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-control" name="cmbCurso">
+                                <option>--Seleccione--</option>
+                                <option value="FDP">FDP - Fundamentos de programación</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Semestre *</label>
+                            <select class="form-control" name="cmbSemestre">
+                                <option>--Seleccione--</option>
+                                <option value="2022-1">2022-1</option>
+                            </select>
+                        </div>
+                        
+                        <p>&nbsp;</p>
+                        {% csrf_token %}  
+                        <button type="submit" class="btn btn-primary">Visualizar</button>
+
+                    </form>
+                    <!-- Fin Formulario-->
+
+                    <!-- Gráfica highcharts-->
+                    <div class="row">
+                        <p>&nbsp;</p>
+                        <div class="col-md-12">
+                        <div class="main-card mb-3 card">
+
+                            <script src="https://code.highcharts.com/highcharts.js"></script>
+                            <script src="https://code.highcharts.com/modules/series-label.js"></script>
+                            <script src="https://code.highcharts.com/modules/exporting.js"></script>
+                            <script src="https://code.highcharts.com/modules/export-data.js"></script>
+                            <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+                            <figure class="highcharts-figure">
+                                <div id="container">
+
+                                </div>
+                            </figure>
+
+                            <script type="text/javascript">
+
+                                Highcharts.chart('container', {
+
+                                title: {
+                                    text: 'Calificaciones del Curso'
+                                },
+
+                                subtitle: {
+                                    text: 'Origen: SPEI.inginious'
+                                },
+
+                                yAxis: {
+                                    title: {
+                                        text: 'Estudiante'
+                                    }
+                                },
+
+                                xAxis: {
+                                    categories: {{estudiante1|safe}}
+                                },
+
+                                legend: {
+                                    layout: 'vertical',
+                                    align: 'right',
+                                    verticalAlign: 'middle'
+                                },
+
+                                series: [{
+                                    name: 'Laboratorio 1',
+                                    data: {{calificacion1|safe}}
+                                }, {
+                                    name: 'Laboratorio 2',
+                                    data: {{calificacion2|safe}}
+                                }],
+
+                                responsive: {
+                                    rules: [{
+                                        condition: {
+                                            maxWidth: 500
+                                        },
+                                        chartOptions: {
+                                            legend: {
+                                                layout: 'horizontal',
+                                                align: 'center',
+                                                verticalAlign: 'bottom'
+                                            }
+                                        }
+                                    }]
+                                }
+
+                                });
+                            </script>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin gráfica highcharts-->
+                </div>
+            </div>
+            <!-- Fin Cuerpo-->
+        </div>
+    {% endblock %}
+
+    <!-- Pie -->
+    {% block footer %}
+        {% include "foot.html" %}
+    {% endblock %}
+    
+</body>
+</html>
