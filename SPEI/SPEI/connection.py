@@ -9,8 +9,8 @@ def connection_postgresql():
             "host": "localhost",
             "port": 5432,
             "user": "postgres",
-            "password": "123456",
-            "dbname": "spei_prueba"
+            "password": "root",
+            "dbname": "spei"
         }
     
         conexion = psycopg2.connect(**credenciales)
