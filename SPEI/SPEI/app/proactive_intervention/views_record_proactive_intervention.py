@@ -25,13 +25,13 @@ def record_proactive_intervention(request):
         cursor = connection_postgresql()
 
         # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
+        cursor.execute(""" SELECT id, course_name 
                            FROM early_intervention.courses
                            WHERE state = 'A' """)
         course = cursor.fetchall()
 
         # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
+        cursor.execute(""" SELECT id, semester 
                            FROM early_intervention.semesters 
                            WHERE state = 'A' """)
         semester = cursor.fetchall()
@@ -95,31 +95,21 @@ def upload_record_proactive_intervention(request):
         # Se convierte el DataFrame a una lista
         result = data.to_numpy().tolist()
 
-        # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
-                           FROM early_intervention.courses
-                           WHERE state = 'A' """)
-        course = cursor.fetchall()
-
-        # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
-                           FROM early_intervention.semesters 
-                           WHERE state = 'A' """)
-        semester = cursor.fetchall()
-
-        # Se consulta el id del semestre
+        # Se consulta el id de courses_semesters
         select = (""" SELECT id 
-                      FROM early_intervention.semesters 
-                      WHERE semester = %(semester)s 
+                      FROM early_intervention.courses_semesters 
+                      WHERE id_course = %s
+                      AND id_semester = %s
                       AND state = 'A' """)
-        cursor.execute(select, {'semester': cmb_semester})
-        id_semester = cursor.fetchone()
+        parameter = (cmb_course, cmb_semester)
+        cursor.execute(select, parameter)
+        id_courses_semesters = cursor.fetchone()
 
         # Se valida si existen registros para ese semestre
         select = (""" SELECT count(*) AS contador 
                       FROM early_intervention.regression_data
-                      WHERE id_semesters = %(id_semester)s """)
-        cursor.execute(select, {'id_semester': id_semester[0]})
+                      WHERE id_courses_semesters = %(id_courses_semester)s """)
+        cursor.execute(select, {'id_courses_semester': id_courses_semesters[0]})
         counter = cursor.fetchone()
 
         # Si contador es igual a 0, entonces no existen registros en la tabla y se realiza el insert
@@ -131,11 +121,11 @@ def upload_record_proactive_intervention(request):
                 
                 # Se ejecuta el query 
                 insert = (""" INSERT INTO early_intervention.regression_data 
-                              (id_semesters, student, lab1, 
+                              (id_courses_semesters, student, lab1, 
                               delivery_time_lab1, number_tried_lab1,
                               lab2, lab3, average, final_prediction) 
                               VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s) """)
-                parameter = (str(id_semester[0]), 
+                parameter = (str(id_courses_semesters[0]), 
                              str(data['student'][i]), 
                              str(data['lab1'][i]), 
                              str(data['delivery_time_lab1'][i]), 
@@ -147,13 +137,25 @@ def upload_record_proactive_intervention(request):
                 cursor.execute(insert, parameter)   
 
         # Se consultan los registros de la tabla para mostrarlos en el html
-        select = (""" SELECT S.semester, RD.student, RD.lab1, 
-                      RD.delivery_time_lab1, RD.number_tried_lab1, RD.lab2, RD.lab3
-                      FROM early_intervention.regression_data AS RD
-                      INNER JOIN early_intervention.semesters AS S ON RD.id_semesters = S.id
-                      WHERE id_semesters = %(id_semester)s """)
-        cursor.execute(select, {'id_semester': id_semester[0]})
+        select = (""" SELECT CS.id, RD.student, RD.lab1, 
+                        RD.delivery_time_lab1, RD.number_tried_lab1, RD.lab2, RD.lab3
+                        FROM early_intervention.regression_data AS RD
+                        INNER JOIN early_intervention.courses_semesters AS CS ON RD.id_courses_semesters = CS.id
+                        WHERE RD.id_courses_semesters = %(id_courses_semesters)s """)
+        cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
         record = cursor.fetchall()
+
+        # Se consulta el nombre del curso
+        cursor.execute(""" SELECT id, course_name 
+                           FROM early_intervention.courses
+                           WHERE state = 'A' """)
+        course = cursor.fetchall()
+
+        # Se consultan los semestres
+        cursor.execute(""" SELECT id, semester 
+                           FROM early_intervention.semesters 
+                           WHERE state = 'A' """)
+        semester = cursor.fetchall()
 
         # Se renderiza con el Contexto con los parámetros
         context = {"course":            course,
@@ -162,7 +164,7 @@ def upload_record_proactive_intervention(request):
                    "record":            record, 
                    "user":              request.session['user'], 
                    "role":              request.session['role']}
-
+        
         # *** Plantilla ***
         return render(request, 'proactive_intervention/record_proactive_intervention.html', context= context)
 

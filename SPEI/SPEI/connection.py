@@ -11,11 +11,10 @@ def connection_postgresql():
             "user": "postgres",
             # Producción
             "password": "root",
-            "dbname": "spei"
+            "dbname": "spei",
             # Pruebas
             #"password": "123456",
             #"dbname": "spei_prueba"
-
         }
     
         conexion = psycopg2.connect(**credenciales)

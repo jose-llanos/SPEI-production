@@ -36,13 +36,13 @@ def performance_regression(request):
         cursor = connection_postgresql()
 
         # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
+        cursor.execute(""" SELECT id, course_name 
                            FROM early_intervention.courses
                            WHERE state = 'A' """)
         course = cursor.fetchall()
 
         # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
+        cursor.execute(""" SELECT id, semester 
                            FROM early_intervention.semesters 
                            WHERE state = 'A' """)
         semester = cursor.fetchall()
@@ -108,31 +108,21 @@ def performance_regression_prediction(request):
 
         ### -----------------------------------------------
        
-        # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
-                           FROM early_intervention.courses
-                           WHERE state = 'A' """)
-        course = cursor.fetchall()
-
-        # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
-                           FROM early_intervention.semesters 
-                           WHERE state = 'A' """)
-        semester = cursor.fetchall()
-
-        # Se consulta el id del semestre
+        # Se consulta el id de courses_semesters
         select = (""" SELECT id 
-                      FROM early_intervention.semesters 
-                      WHERE semester = %(semester)s 
+                      FROM early_intervention.courses_semesters 
+                      WHERE id_course = %s
+                      AND id_semester = %s
                       AND state = 'A' """)
-        cursor.execute(select, {'semester': cmb_semester})
-        id_semester = cursor.fetchone()
+        parameter = (cmb_course, cmb_semester)
+        cursor.execute(select, parameter)
+        id_courses_semesters = cursor.fetchone()
 
         # Se valida si el promedio de final_prediccion es igual o mayor a cero
         select = (""" SELECT avg(final_prediction) 
                       FROM early_intervention.regression_data 
-                      WHERE id_semesters = %(id_semester)s """)
-        cursor.execute(select, {'id_semester': id_semester[0]})
+                      WHERE id_courses_semesters = %(id_courses_semesters)s """)
+        cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
         average = cursor.fetchone()
 
         # Si promedio es igual a 0, entonces se realiza la predicción
@@ -140,8 +130,8 @@ def performance_regression_prediction(request):
             # Se cargan los registros 
             select = (""" SELECT * 
                           FROM early_intervention.regression_data 
-                          WHERE id_semesters = %(id_semester)s """)
-            cursor.execute(select, {'id_semester': id_semester[0]})
+                          WHERE id_courses_semesters = %(id_courses_semesters)s """)
+            cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
             record = cursor.fetchall()
 
             # Se cargan los registros en un DataFrame
@@ -181,10 +171,10 @@ def performance_regression_prediction(request):
             for i in result.index:
                 update = """ UPDATE early_intervention.regression_data 
                              SET final_prediction = %s 
-                             WHERE id_semesters = %s
+                             WHERE id_courses_semesters = %s
                              AND student = %s """
                 parameter = (str(result['final_prediction'][i]),
-                             str(id_semester[0]), 
+                             str(id_courses_semesters[0]), 
                              str(result['student'][i]))
                 cursor.execute(update, parameter)
 
@@ -196,10 +186,22 @@ def performance_regression_prediction(request):
                       number_tried_lab1, lab2, lab3,
                       average, final_prediction
                       FROM early_intervention.regression_data  
-                      WHERE id_semesters = %(id_semester)s 
+                      WHERE id_courses_semesters = %(id_courses_semesters)s 
                       ORDER BY final_prediction ASC """)
-        cursor.execute(select, {'id_semester': id_semester[0]})
+        cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
         record = cursor.fetchall()
+
+        # Se consulta el nombre del curso
+        cursor.execute(""" SELECT id, course_name 
+                           FROM early_intervention.courses
+                           WHERE state = 'A' """)
+        course = cursor.fetchall()
+
+        # Se consultan los semestres
+        cursor.execute(""" SELECT id, semester 
+                           FROM early_intervention.semesters 
+                           WHERE state = 'A' """)
+        semester = cursor.fetchall()
         
         # Se renderiza con el Contexto con los parámetros
         context = {"course":   course,
