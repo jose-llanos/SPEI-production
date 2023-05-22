@@ -37,7 +37,7 @@
                             <select class="form-control" id="course" name="cmbCourse">
                                 <option value="seleccione">--Seleccione--</option>
                                 {% for fila in course %}
-                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                    <option value="{{ fila.0 }}"> {{ fila.1 }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -47,7 +47,7 @@
                             <select class="form-control" id="semester" name="cmbSemester">
                                 <option value="seleccione">--Seleccione--</option>
                                 {% for fila in semester %}
-                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                    <option value="{{ fila.0 }}"> {{ fila.1 }}</option>
                                 {% endfor %} 
                             </select>
                         </div>
@@ -97,18 +97,15 @@
                     </form>
                     <!-- Fin Formulario-->
                     <!-- Formulario -->
-                    <form action="/send_student_reinforcement/" method="POST" onsubmit="return validarCampos()">
+                    <form action="/send_student_reinforcement/" method="POST">
                         <input type="hidden" name="cmbCourse" value="{{ course }}">
                         <input type="hidden" name="cmbSemester" value="{{ semester }}">
                         <p>&nbsp;</p>
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary">Enviar Refuerzo</button>
                         <p>&nbsp;</p>
-                        {% for fila in low_performing %}
-                            <p>El refuerzo se ha enviado correctamente a: {{fila}} (Bajo desempeño)</p>
-                        {% endfor %}
-                        {% for fila in average_performing %}
-                            <p>El refuerzo se ha enviado correctamente a: {{fila}} (Medio desempeño)</p>
+                        {% for fila in student_performance %}
+                            <p>Los ejercicios de refuerzo se han enviado correctamente a: {{fila}}</p>
                         {% endfor %}
                     </form>
                     <!-- Fin Formulario-->
