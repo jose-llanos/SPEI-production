@@ -14,13 +14,13 @@ def rpt_columns(request):
         cursor = connection_postgresql()
 
         # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
+        cursor.execute(""" SELECT id, course_name 
                            FROM early_intervention.courses
                            WHERE state = 'A' """)
         course = cursor.fetchall()
 
         # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
+        cursor.execute(""" SELECT id, semester 
                            FROM early_intervention.semesters 
                            WHERE state = 'A' """)
         semester = cursor.fetchall()
@@ -49,36 +49,26 @@ def column_display(request):
         # Se genera la conexión con la base de datos
         cursor = connection_postgresql()
 
-        # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
-                           FROM early_intervention.courses
-                           WHERE state = 'A' """)
-        course = cursor.fetchall()
-
-        # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
-                           FROM early_intervention.semesters 
-                           WHERE state = 'A' """)
-        semester = cursor.fetchall()
-
         # Se utilizan los valores que llegan del formulario
         cmb_course = request.POST['cmbCourse']
         cmb_semester = request.POST['cmbSemester']
 
-        # Se consulta el id del semestre
+        # Se consulta el id de courses_semesters
         select = (""" SELECT id 
-                      FROM early_intervention.semesters 
-                      WHERE semester = %(semester)s 
+                      FROM early_intervention.courses_semesters 
+                      WHERE id_course = %s
+                      AND id_semester = %s
                       AND state = 'A' """)
-        cursor.execute(select, {'semester': cmb_semester})
-        id_semester = cursor.fetchone()
+        parameter = (cmb_course, cmb_semester)
+        cursor.execute(select, parameter)
+        id_courses_semesters = cursor.fetchone()
 
-        # Se ejecuta el query 
+        # Se genera la busqueda en la BD
         select = (""" SELECT * 
                       FROM early_intervention.regression_data 
-                      WHERE id_semesters = %(id_semester)s
+                      WHERE id_courses_semesters = %(id_courses_semesters)s
                       ORDER BY final_prediction ASC """)
-        cursor.execute(select, {'id_semester': id_semester[0]})
+        cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
         record = cursor.fetchall()
 
         # Defino los vectores para los elementos del reporte
@@ -90,6 +80,18 @@ def column_display(request):
             name.append(row[2])
             average_grade.append(float(row[8]))
             final_grade_prediction.append(float(row[9]))
+
+        # Se consulta el nombre del curso
+        cursor.execute(""" SELECT id, course_name 
+                           FROM early_intervention.courses
+                           WHERE state = 'A' """)
+        course = cursor.fetchall()
+
+        # Se consultan los semestres
+        cursor.execute(""" SELECT id, semester 
+                           FROM early_intervention.semesters 
+                           WHERE state = 'A' """)
+        semester = cursor.fetchall()
 
         # Se renderiza con el Contexto con los parámetros
         context = {"course":                 course,
@@ -120,13 +122,13 @@ def rpt_lines(request):
         cursor = connection_postgresql()
 
         # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
+        cursor.execute(""" SELECT id, course_name 
                            FROM early_intervention.courses
                            WHERE state = 'A' """)
         course = cursor.fetchall()
 
         # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
+        cursor.execute(""" SELECT id, semester 
                            FROM early_intervention.semesters 
                            WHERE state = 'A' """)
         semester = cursor.fetchall()
@@ -154,36 +156,26 @@ def lines_display(request):
          # Se genera la conexión con la base de datos
         cursor = connection_postgresql()
 
-        # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
-                           FROM early_intervention.courses
-                           WHERE state = 'A' """)
-        course = cursor.fetchall()
-
-        # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
-                           FROM early_intervention.semesters 
-                           WHERE state = 'A' """)
-        semester = cursor.fetchall()
-
         # Se utilizan los valores que llegan del formulario
         cmb_course = request.POST['cmbCourse']
         cmb_semester = request.POST['cmbSemester']
 
-        # Se consulta el id del semestre
+        # Se consulta el id de courses_semesters
         select = (""" SELECT id 
-                      FROM early_intervention.semesters 
-                      WHERE semester = %(semester)s 
+                      FROM early_intervention.courses_semesters 
+                      WHERE id_course = %s
+                      AND id_semester = %s
                       AND state = 'A' """)
-        cursor.execute(select, {'semester': cmb_semester})
-        id_semester = cursor.fetchone()
+        parameter = (cmb_course, cmb_semester)
+        cursor.execute(select, parameter)
+        id_courses_semesters = cursor.fetchone()
 
-        # Se ejecuta el query 
+         # Se genera la busqueda en la BD
         select = (""" SELECT * 
                       FROM early_intervention.regression_data 
-                      WHERE id_semesters = %(id_semester)s
+                      WHERE id_courses_semesters = %(id_courses_semesters)s
                       ORDER BY final_prediction ASC """)
-        cursor.execute(select, {'id_semester': id_semester[0]})
+        cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
         record = cursor.fetchall()
 
         # Defino los vectores para los elementos del reporte
@@ -195,6 +187,18 @@ def lines_display(request):
             name.append(row[2])
             average_grade.append(float(row[8]))
             final_grade_prediction.append(float(row[9]))
+        
+        # Se consulta el nombre del curso
+        cursor.execute(""" SELECT id,course_name 
+                           FROM early_intervention.courses
+                           WHERE state = 'A' """)
+        course = cursor.fetchall()
+
+        # Se consultan los semestres
+        cursor.execute(""" SELECT id,semester 
+                           FROM early_intervention.semesters 
+                           WHERE state = 'A' """)
+        semester = cursor.fetchall()
 
         # Se renderiza con el Contexto con los parámetros
         context = {"course":                 course,

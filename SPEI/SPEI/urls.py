@@ -23,12 +23,17 @@ from SPEI.views import student_dashboard
 from SPEI.views import teacher_dashboard
 from SPEI.views import sign_off
 
-# search
-from SPEI.views_search import preventive_grade
-from SPEI.views_search import show_preventive_grade
-from SPEI.views_search import proactive_grade
-from SPEI.views_search import show_proactive_grade
-from SPEI.views_search import rpt_intervention_message
+
+### ----- Package: search ----- 
+
+##### views_search #####
+from SPEI.app.search.views_search import student_grade
+from SPEI.app.search.views_search import show_student_grade
+##### End views_search #####
+
+### ----- End Package: search ----- 
+
+
 
 ### ----- Package: configuration ----- 
 
@@ -158,7 +163,9 @@ from SPEI.app.courses_reports.views_dashboard import display_average_tried_activ
 from SPEI.app.performance_reports.views_performance_reports import performance_activity
 from SPEI.app.performance_reports.views_performance_reports import display_performance_activity
 from SPEI.app.performance_reports.views_performance_reports import weighted_performance
-#from SPEI.app.performance_reports.views_performance_reports import display_weighted_performance
+from SPEI.app.performance_reports.views_performance_reports import display_weighted_performance
+from SPEI.app.performance_reports.views_performance_reports import achievement_indicator 
+from SPEI.app.performance_reports.views_performance_reports import display_achievement_indicator 
 ### ----- Fin Package: performance_reports ----- 
 
 
@@ -171,15 +178,6 @@ urlpatterns = [
     path('teacher_dashboard/', teacher_dashboard, name="teacher_dashboard"),
     path('sign_off/', sign_off, name="sign_off"),
 
-    # views_configuracion
-
-
-    #views_search
-    path('preventive_grade/', preventive_grade, name="preventive_grade"),
-    path('show_preventive_grade/', show_preventive_grade),
-    path('proactive_grade/', proactive_grade, name="proactive_grade"),
-    path('show_proactive_grade/', show_proactive_grade),
-    path('rpt_intervention_message/', rpt_intervention_message),
 
     ### ----- Package: configuration ----- 
     
@@ -191,6 +189,18 @@ urlpatterns = [
     ##### End views_courses #####
 
     ### ----- Fin Package: configuration ----- 
+
+
+
+    ### ----- Package: search ----- 
+
+    ##### views_search ##### 
+    path('student_grade/', student_grade, name="student_grade"),
+    path('show_student_grade/', show_student_grade),
+    ##### End views_search #####
+
+    ### ----- Fin Package: search ----- 
+
 
 
 
@@ -269,9 +279,9 @@ urlpatterns = [
     path('student_suggestion/', student_suggestion),
     ##### Fin views_suggestions #####
 
-
     ### ----- Fin Package: proactive_intervention ----- 
    
+
 
     
     ### ----- Package: prediction_reports ----- 
@@ -316,7 +326,9 @@ urlpatterns = [
     path('performance_activity/', performance_activity, name="performance_activity"),
     path('display_performance_activity/', display_performance_activity),
     path('weighted_performance/', weighted_performance, name="weighted_performance"),
-    #path('display_weighted_performance/', display_weighted_performance),
+    path('display_weighted_performance/', display_weighted_performance),
+    path('achievement_indicator/', achievement_indicator, name="achievement_indicator"),
+    path('display_achievement_indicator/', display_achievement_indicator),
 
     ### ----- Fin Package: performance_reports ----- 
     

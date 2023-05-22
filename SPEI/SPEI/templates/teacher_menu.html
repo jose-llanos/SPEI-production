@@ -25,6 +25,7 @@
                                 <i class="fas fa-angle-down"></i>
                             </a>
                             <ul>
+                                <!--
                                 <li>
                                     <a href="">
                                         <i class="fas fa-wrench"></i>
@@ -37,12 +38,14 @@
                                         Código Referencia
                                     </a>
                                 </li>
+                                -->
                                 <li>
                                     <a href="{% url 'list_course' %}">
                                         <i class="fas fa-wrench"></i>
                                         Cursos
                                     </a>
                                 </li>
+                                <!--
                                 <li>
                                     <a href="">
                                         <i class="fas fa-wrench"></i>
@@ -61,9 +64,10 @@
                                         Temas Intervención
                                     </a>
                                 </li>
+                                -->
                             </ul>
                         </li>
-
+                        <!--
                         <li>
                             <a href="#">
                                 <i class="fas fa-cog"></i>
@@ -95,6 +99,7 @@
                                 </li>
                             </ul>
                         </li>
+                        -->
                         
                         <li>
                             <a href="#">
@@ -104,13 +109,9 @@
                             </a>
                             <ul>
                                 <li>
-                                    <a href="{% url 'preventive_grade' %}">
+                                    <a href="{% url 'student_grade' %}">
                                         <i class="fas fa-clipboard"></i>
-                                        Calificación Preventiva
-                                    </a>
-                                    <a href="{% url 'proactive_grade' %}">
-                                        <i class="fas fa-clipboard"></i>
-                                        Calificación Proactiva
+                                        Calificación Estudiante
                                     </a>
                                 </li>
                             </ul>

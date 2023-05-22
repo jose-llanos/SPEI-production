@@ -31,7 +31,7 @@
                     <!-- Fin titulo Cuerpo -->
                     
                     <!-- Formulario -->
-                    <form action="/display_performance_activity/" method="POST">
+                    <form action="/display_weighted_performance/" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="user" value="{{ user }}">
                         <div class="mb-3">
@@ -39,7 +39,7 @@
                             <select class="form-control" id="course" name="cmbCourse">
                                 <option value="seleccione">--Seleccione--</option>
                                 {% for fila in course %}
-                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                    <option value="{{ fila.0 }}"> {{ fila.1 }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -49,7 +49,7 @@
                             <select class="form-control" id="semester" name="cmbSemester">
                                 <option value="seleccione">--Seleccione--</option>
                                 {% for fila in semester %}
-                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                    <option value="{{ fila.0 }}"> {{ fila.1 }}</option>
                                 {% endfor %} 
                             </select>
                         </div>
@@ -87,7 +87,7 @@
                                         align: 'left'
                                     },
                                     xAxis: {
-                                        categories: ['Laboratorio 1', 'Laboratorio 2']
+                                        categories: ['Laboratorio 1','Laboratorio 2','Laboratorio 3']
                                     },
                                     yAxis: {
                                         title: {
@@ -105,20 +105,11 @@
                                     series: [{
                                         type: 'column',
                                         name: 'Estudiante',
-                                        data: [4.2, 2.5]
+                                        data: [{{student_grade.0|safe}}, {{student_grade.1|safe}}, {{student_grade.2|safe}}]
                                     }, {
                                         type: 'column',
                                         name: 'Curso',
-                                        data: [4.0, 3.6]
-                                    }, {
-                                        type: 'spline',
-                                        name: 'Promedio',
-                                        data: [4.1, 3.0],
-                                        marker: {
-                                            lineWidth: 2,
-                                            lineColor: Highcharts.getOptions().colors[3],
-                                            fillColor: 'white'
-                                        }
+                                        data: [{{course_avg.0|safe}}, {{course_avg.1|safe}}, {{course_avg.2|safe}}]
                                     }]
                                 });
                             </script>
