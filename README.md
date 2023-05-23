@@ -33,8 +33,14 @@ Software: Student Prediction Early Intervention
 ## Instalar el motor de bases de datos PostgreSQL
 #### - docker-compose up -d
 
-## Crear tablas de la base de datos 
-#### - docker exec -i postgres pg_restore -d spei -U root < SPEI/BD/bk_spei_01-mayo-2023.sql
+## Crear la base de datos 
+#### # docker exec -i postgres createdb spei -U postgres
+
+## Montar el Backup de la base de datos 
+#### # docker exec -i postgres pg_restore -d spei -U postgres < SPEI/BD/bk_spei_22-mayo-2023.sql
+
+## Borrar la base de datos 
+#### # docker exec -i postgres dropdb spei -U postgres
 
 ## Ejecutar la aplicación de Python (ver en local host del navegador)
 #### - python3 manage.py runserver 0.0.0.0:80 &
