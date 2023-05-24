@@ -67,19 +67,27 @@
                                 <th>Nombre Indicador Logro (IL)</th>
                                 <th>Valor Indicador</th>
                                 <th>Valor Obtenido</th>
+                                <th>Desempeño</th>
                             </tr>
                             </thead>
   
                             <tbody>
                                 {% for fila in record %}
-                                  <tr>
+                                <tr>
                                     <td>{{ fila.0 }}</td>
                                     <td>{{ fila.1 }}</td>
                                     <td>{{ fila.2 }}</td>
                                     <td>{{ fila.3 }}</td>
                                     <td>{{ fila.4 }}</td>
-                                  </tr>
-                                {% endfor %}                        
+                                    {% if fila.5 <= 0.58 %}
+                                        <td style="color: red"><strong>Bajo</strong></td>
+                                    {% elif fila.5 > 0.58 and fila.5 < 0.82 %}
+                                        <td style="color: orange"><strong>Medio</strong></td>
+                                    {% elif fila.5 >= 0.82  %}
+                                        <td style="color: green"><strong>Alto</strong></td>
+                                    {% endif %}
+                                </tr> 
+                                {% endfor %} 
                               </tbody>
                         </table>
                     </form>

@@ -93,14 +93,14 @@ def display_performance_activity(request):
                           AND id_courses_semesters = %s """)
             parameter = (student[0] , id_courses_semesters[0])
             cursor.execute(select, parameter)
-            student_grade = cursor.fetchone()
+            grade = cursor.fetchone()
 
             # Se consulta el promedio del laboratorio 1 para el curso
             select = (""" SELECT avg(lab1) 
                           FROM early_intervention.regression_data
                           WHERE id_courses_semesters = %(id_courses_semesters)s  """)
             cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
-            course_avg = cursor.fetchone()
+            avg = cursor.fetchone()
 
         # Si la tarea es laboratorio2
         elif task == 'Laboratorio2':
@@ -111,14 +111,14 @@ def display_performance_activity(request):
                           AND id_courses_semesters = %s """)
             parameter = (student[0] , id_courses_semesters[0])
             cursor.execute(select, parameter)
-            student_grade = cursor.fetchone()
+            grade = cursor.fetchone()
 
             # Se consulta el promedio del laboratorio 2 para el curso
             select = (""" SELECT avg(lab2) 
                           FROM early_intervention.regression_data
                           WHERE id_courses_semesters = %(id_courses_semesters)s  """)
             cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
-            course_avg = cursor.fetchone()
+            avg = cursor.fetchone()
         
         # Si la tarea es laboratorio3
         elif task == 'Laboratorio3':
@@ -129,14 +129,14 @@ def display_performance_activity(request):
                           AND id_courses_semesters = %s """)
             parameter = (student[0] , id_courses_semesters[0])
             cursor.execute(select, parameter)
-            student_grade = cursor.fetchone()
+            grade = cursor.fetchone()
 
             # Se consulta el promedio del laboratorio 3 para el curso
             select = (""" SELECT avg(lab3) 
                           FROM early_intervention.regression_data
                           WHERE id_courses_semesters = %(id_courses_semesters)s  """)
             cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
-            course_avg = cursor.fetchone()
+            avg = cursor.fetchone()
 
         # Se consulta el nombre del curso
         cursor.execute(""" SELECT id, course_name 
@@ -156,6 +156,17 @@ def display_performance_activity(request):
                            WHERE task_name IN ('Laboratorio1','Laboratorio2','Laboratorio3')
                            AND state = 'A' """)
         task = cursor.fetchall()
+
+        # Se valida que el estudiante tenga calificaciones para el curso seleccionado
+        student_grade = [] 
+        course_avg = []
+
+        if grade != None and avg != 0:
+            student_grade.append(grade[0])
+            course_avg.append(avg[0])
+        else:
+            student_grade.append(0)
+            course_avg.append(0)
 
         # Se cargan las variables de sesión al contexto
         context = {"course":          course,
@@ -254,7 +265,7 @@ def display_weighted_performance(request):
         student_grade = cursor.fetchone()
 
         # Se consulta el promedio del curso para: laboratorio1, laboratorio2 y laboratorio3
-        select = (""" SELECT avg(lab1), avg(lab2), avg(lab3)
+        select = (""" SELECT ROUND(avg(lab1),1), ROUND(avg(lab2),1), ROUND(avg(lab3),1)
                       FROM early_intervention.regression_data
                       WHERE id_courses_semesters = %(id_courses_semesters)s  """)
         cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
@@ -361,7 +372,7 @@ def display_achievement_indicator(request):
         id_courses_semesters = cursor.fetchone()
 
         # Se consultan los registros en la Base de Datos
-        select = (""" SELECT T.task_name, IA.code, IA.name, EA.points, SA.grade_indicator
+        select = (""" SELECT T.task_name, IA.code, IA.name, EA.points, SA.grade_indicator, ROUND((SA.grade_indicator / EA.points), 2)
                       FROM early_intervention.student_assessments AS SA
                       INNER JOIN early_intervention.evaluation_activity AS EA ON SA.id_evaluation_activity = EA.id 
                       INNER JOIN early_intervention.tasks AS T ON EA.id_tasks = T.id
@@ -372,7 +383,6 @@ def display_achievement_indicator(request):
         parameter = (student[0], id_courses_semesters[0])
         cursor.execute(select, parameter)
         record = cursor.fetchall()
-        
 
         # Se consulta el nombre del curso
         cursor.execute(""" SELECT id, course_name 
@@ -388,11 +398,11 @@ def display_achievement_indicator(request):
 
 
         # Se cargan las variables de sesión al contexto
-        context = {"course":    course,
-                   "semester":  semester,
-                   "record":    record,
-                   "user":      request.session['user'], 
-                   "role":      request.session['role']}
+        context = {"course":      course,
+                   "semester":    semester,
+                   "record":      record,
+                   "user":        request.session['user'], 
+                   "role":        request.session['role']}
 
         # *** Plantilla ***
         return render(request, 'performance_reports/rpt_achievement_indicator.html', context= context)
