@@ -3,7 +3,7 @@
 SPEI es una herramienta Web que permite realizar intervención temprana a partir de:
 
 * Predicción del desempeño del estudiante en las semanas 3, 5 y 7 de cursos de programación. A partir de características relacionadas con: calificación de los laboratorios, tiempo utilizado en las entregas (días) y número de intentos.
-* Intervención preventiva (semanas 3 y 5): Incluye la gestión de tutoría grupal, envío de sugerencias y código fuente de referencia, al correo electrónico al estudiantes intervenido.
+* Intervención preventiva (semanas 3 y 5): Incluye la gestión de tutoría grupal, envío de sugerencias y código fuente de referencia al correo electrónico al estudiantes intervenido.
 * Intervención proactiva (semana 7): Incluye el envío y seguimiento de ejercicios de programación por indicador de logro, a los estudiantes intervenidos.
 
 
