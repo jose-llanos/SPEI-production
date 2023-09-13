@@ -6,16 +6,9 @@ def connection_postgresql():
     # Se genera la conexión con la base de datos
     try:
         credenciales = {
-            "host": "localhost",
+            "host": "",
             "port": 5432,
-            "user": "postgres",
-            # Producción
-            "password": "root",
-            "dbname": "spei"
-            # Pruebas
-            #"password": "123456",
-            #"dbname": "spei_prueba"
-
+            "user": ""
         }
     
         conexion = psycopg2.connect(**credenciales)
