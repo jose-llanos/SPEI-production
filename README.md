@@ -1,5 +1,16 @@
 # SPEI-production
-Software: Student Prediction Early Intervention
+
+SPEI es una herramienta Web que permite realizar intervención temprana a partir de:
+
+* Predicción del desempeño del estudiante en las semanas 3, 5 y 7 de cursos de programación. A partir de características relacionadas con: calificación de los laboratorios, tiempo utilizado en las entregas (días) y número de intentos.
+* Intervención preventiva (semanas 3 y 5): Incluye la gestión de tutoría grupal, envío de sugerencias y código fuente de referencia, al correo electrónico al estudiantes intervenido.
+* Intervención proactiva (semana 7): Incluye el envío y seguimiento de ejercicios de programación por indicador de logro, a los estudiantes intervenidos.
+
+
+## Descripción técnica
+
+La herramienta SPEI está desarrollada en Django, un framework escrito en el lenguaje de programación Python que utiliza la arquitectura Model-Template-View para integrar la base de datos, la lógica del negocio y la presentación de los datos.  La base de datos es PostgreSQL y soporta transacciones SQL que se ejecutan dentro de un esquema. La lógica del negocio es controlada por el modelo de la aplicación, se encarga de la comunicación bidireccional entre la base de datos y la presentación. La presentación de los datos se muestra en plantillas HTML que renderizan las solicitudes y respuesta generadas por el usuario. 
+
 
 ## Instalar docker
 #### - sudo apt update
