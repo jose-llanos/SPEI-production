@@ -9,8 +9,10 @@ def connection_postgresql():
             "host": "localhost",
             "port": 5432,
             "user": "postgres",
+            # Local
+            #"password": "123456",
             # Producción
-            "password": "123456",
+            "password": "root",
             "dbname": "spei"
         }
     
