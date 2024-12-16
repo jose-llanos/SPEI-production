@@ -37,7 +37,7 @@
                             <select class="form-control" id="course" name="cmbCourse">
                                 <option value="seleccione">--Seleccione--</option>
                                 {% for fila in course %}
-                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                    <option value="{{ fila.0 }}"> {{ fila.1 }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -47,7 +47,7 @@
                             <select class="form-control" id="semester" name="cmbSemester">
                                 <option value="seleccione">--Seleccione--</option>
                                 {% for fila in semester %}
-                                    <option value="{{ fila.0 }}"> {{ fila.0 }}</option>
+                                    <option value="{{ fila.0 }}"> {{ fila.1 }}</option>
                                 {% endfor %} 
                             </select>
                         </div>

@@ -24,21 +24,22 @@ def suggestion(request):
         cursor = connection_postgresql()
 
         # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
+        cursor.execute(""" SELECT id, course_name 
                            FROM early_intervention.courses
                            WHERE state = 'A' """)
         course = cursor.fetchall()
 
         # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
+        cursor.execute(""" SELECT id, semester 
                            FROM early_intervention.semesters 
-                           WHERE state = 'A' """)
+                           WHERE state = 'A' 
+                           ORDER BY id ASC""")
         semester = cursor.fetchall()
 
         # Se consultan los estudiantes a intervenir
         cursor.execute(""" SELECT student 
                            FROM early_intervention.regression_data
-                           WHERE id_semesters = 2
+                           WHERE id_courses_semesters = 2
                            AND final_prediction < 4.1 """)
         student = cursor.fetchall()
 
@@ -75,10 +76,13 @@ def student_suggestion(request):
         # Se consulta el id del semestre
         select = (""" SELECT id 
                       FROM early_intervention.semesters 
-                      WHERE semester = %(semester)s 
+                      WHERE id = %(semester)s 
                       AND state = 'A' """)
         cursor.execute(select, {'semester': cmb_semester})
         id_semester = cursor.fetchone()
+
+        print("ID SEMESTER:::", id_semester[0])
+        print("Cmb student:::", cmb_student)
 
         # Se ejecuta el query de la cabecera
         select = (""" SELECT T.id, T.id_semesters, T.student, 
@@ -122,8 +126,32 @@ def student_suggestion(request):
                 state.append(0)
             
             number_attemps.append(int(row[2]))
+        
+        # Se consulta el nombre del curso
+        cursor.execute(""" SELECT id, course_name 
+                           FROM early_intervention.courses
+                           WHERE state = 'A' """)
+        course = cursor.fetchall()
 
-        context = {"head":           head, 
+        # Se consultan los semestres
+        cursor.execute(""" SELECT id, semester 
+                           FROM early_intervention.semesters 
+                           WHERE state = 'A' 
+                           ORDER BY id ASC""")
+        semester = cursor.fetchall()
+
+        # Se consultan los estudiantes a intervenir
+        cursor.execute(""" SELECT student 
+                           FROM early_intervention.regression_data
+                           WHERE id_courses_semesters = 2
+                           AND final_prediction < 4.1 """)
+        student = cursor.fetchall()
+
+        context = {
+                   "course":         course,
+                   "semester":       semester,
+                   "student":        student,
+                   "head":           head, 
                    "body":           body, 
                    "exercise":       exercise, 
                    "state":          state, 

@@ -6,15 +6,18 @@ def connection_postgresql():
     # Se genera la conexión con la base de datos
     try:
         credenciales = {
-            "host": "",
+            "host": "localhost",
             "port": 5432,
-            "user": ""
+            "user": "postgres",
+            # Producción
+            "password": "123456",
+            "dbname": "spei"
         }
     
         conexion = psycopg2.connect(**credenciales)
         conexion.autocommit = True
         
-    except psycopg.Error as e:
+    except psycopg2.Error as e:
         print("ERROR:", e)
 
     # *** Validación de usuarios ***

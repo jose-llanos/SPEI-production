@@ -24,13 +24,13 @@ def reinforcement(request):
         cursor = connection_postgresql()
 
         # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
+        cursor.execute(""" SELECT id, course_name 
                            FROM early_intervention.courses
                            WHERE state = 'A' """)
         course = cursor.fetchall()
 
         # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
+        cursor.execute(""" SELECT id, semester 
                            FROM early_intervention.semesters 
                            WHERE state = 'A' """)
         semester = cursor.fetchall()
@@ -62,33 +62,35 @@ def student_reinforcement(request):
         cmb_course = request.POST['cmbCourse']
         cmb_semester = request.POST['cmbSemester']
 
-        # Se consulta el nombre del curso
-        cursor.execute(""" SELECT course_name 
+         # Se consulta el nombre del curso
+        cursor.execute(""" SELECT id, course_name 
                            FROM early_intervention.courses
                            WHERE state = 'A' """)
         course = cursor.fetchall()
 
         # Se consultan los semestres
-        cursor.execute(""" SELECT semester 
+        cursor.execute(""" SELECT id, semester 
                            FROM early_intervention.semesters 
                            WHERE state = 'A' """)
         semester = cursor.fetchall()
 
-        # Se consulta el id del semestre
+        # Se consulta el id de courses_semesters
         select = (""" SELECT id 
-                      FROM early_intervention.semesters 
-                      WHERE semester = %(semester)s 
+                      FROM early_intervention.courses_semesters 
+                      WHERE id_course = %s
+                      AND id_semester = %s
                       AND state = 'A' """)
-        cursor.execute(select, {'semester': cmb_semester})
-        id_semester = cursor.fetchone()
+        parameter = (cmb_course, cmb_semester)
+        cursor.execute(select, parameter)
+        id_courses_semesters = cursor.fetchone()
 
         # Se consultan los registros para el refuerzo 
         select = (""" SELECT student, lab1, lab2, lab3, final_prediction 
                       FROM early_intervention.regression_data 
-                      WHERE id_semesters = %(id_semester)s
+                      WHERE id_courses_semesters = %(id_courses_semesters)s
                       AND final_prediction < 4.1
                       ORDER BY final_prediction ASC """)
-        cursor.execute(select, {'id_semester': id_semester[0]})
+        cursor.execute(select, {'id_courses_semesters': id_courses_semesters[0]})
         record = cursor.fetchall()
 
         # Se renderiza con el Contexto con los parámetros
